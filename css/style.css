@@ -1,0 +1,168 @@
+/* Custom Styles & Realistic Effects for Name Plate Studio */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@400;500;600;700&family=Rozha+One&display=swap');
+
+:root {
+  --primary-gold: #f59e0b;
+  --primary-gold-dark: #b45309;
+  --wa-green: #25D366;
+  --wa-dark-green: #128C7E;
+}
+
+body {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #0f1117;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #181b26;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Luxury Gold Gradients & Accents */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fef08a 0%, #facc15 40%, #ca8a04 80%, #a16207 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-glow {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.whatsapp-btn {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
+  transition: all 0.2s ease;
+}
+.whatsapp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+/* Studio Canvas Container */
+.canvas-wrapper {
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+#plateCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 900 / 550;
+  cursor: grab;
+}
+
+/* Control Pills & Radio Tabs */
+.tab-pill {
+  transition: all 0.15s ease-in-out;
+}
+.tab-pill.active {
+  background: #1e293b;
+  color: #fef08a;
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Material Thumbnails */
+.material-card {
+  position: relative;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.material-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.material-card.active {
+  border-color: #f59e0b;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+}
+
+/* Slider Styling */
+input[type="range"] {
+  accent-color: #f59e0b;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(24, 27, 38, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Template Card */
+.template-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.template-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.6), 0 0 16px rgba(245, 158, 11, 0.2);
+}
+
+/* Modal Animation */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.2s ease;
+}
+.modal-dialog {
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Auspicious Motif Grid Item */
+.motif-item {
+  transition: all 0.2s ease;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+}
+.motif-item:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.06);
+}
+.motif-item.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+/* Pulse animation for live order indicators */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.03); }
+}
+.pulse-badge {
+  animation: softPulse 2.5s infinite ease-in-out;
+}

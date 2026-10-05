@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Name Plate Studio - Design & Order via WhatsApp</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              900: '#78350f',
+            },
+            dark: {
+              800: '#181b26',
+              900: '#0f1117',
+              950: '#090a0f',
+            },
+            wa: {
+              500: '#25D366',
+              600: '#128C7E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-dark-900 text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-dark-950">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-amber-950 via-dark-800 to-amber-950 border-b border-amber-900/40 text-xs py-2 px-4 text-center flex items-center justify-center gap-2 text-amber-200/90">
+    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+      ✨ Artisan Studio
+    </span>
+    <span>Premium Handcrafted 3D Acrylic & Wooden Name Plates • Free Standoffs with WhatsApp Orders!</span>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="border-b border-slate-800 bg-dark-950/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.reload()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-400 to-amber-200 flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <i data-lucide="shield" class="w-5 h-5 text-dark-950 stroke-[2.5]"></i>
+        </div>
+        <div>
+          <div class="font-bold text-lg tracking-tight flex items-center gap-1.5">
+            <span id="headerBrandName">ArtisansPlate</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/30 font-medium">Studio</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Custom Name Plate Designer & Direct WhatsApp Ordering</p>
+        </div>
+      </div>
+
+      <!-- Navigation & Action Buttons -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Inspiration Templates -->
+        <button id="btnOpenTemplates" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 transition">
+          <i data-lucide="sparkles" class="w-4 h-4 text-brand-400"></i>
+          <span class="hidden sm:inline">Templates</span>
+        </button>
+
+        <!-- Saved Designs -->
+        <button id="btnOpenSaved" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 transition relative">
+          <i data-lucide="bookmark" class="w-4 h-4 text-amber-400"></i>
+          <span class="hidden sm:inline">My Saved</span>
+          <span id="savedCountBadge" class="hidden absolute -top-1.5 -right-1.5 w-5 h-5 bg-brand-500 text-dark-950 font-bold rounded-full text-[10px] flex items-center justify-center shadow">0</span>
+        </button>
+
+        <!-- Customer Login / Profile Button -->
+        <button id="btnUserAuth" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500/15 hover:bg-brand-500/25 text-brand-300 border border-brand-500/40 transition">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          <span id="userAuthLabel">Customer Sign In</span>
+        </button>
+
+        <!-- Business Settings (Gear) -->
+        <button id="btnOpenSettings" title="Business Settings (Change WhatsApp Number & Shop Name)" class="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition border border-transparent hover:border-slate-700">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace / Studio Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- LEFT: Live Interactive Preview Viewport (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col space-y-4 sticky top-20">
+        
+        <!-- Viewport Controls Bar -->
+        <div class="glass-panel rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <!-- Wall Texture Switcher -->
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-400 flex items-center gap-1 font-medium">
+              <i data-lucide="palette" class="w-3.5 h-3.5"></i> Wall:
+            </span>
+            <div class="flex items-center space-x-1 bg-dark-900/80 p-0.5 rounded-lg border border-slate-700/60" id="wallSwitcher">
+              <button data-wall="brick" class="px-2 py-1 rounded text-[11px] font-medium transition tab-pill active" title="Red Brick Wall">Brick</button>
+              <button data-wall="slate" class="px-2 py-1 rounded text-[11px] font-medium transition tab-pill" title="Dark Slate Wall">Slate</button>
+              <button data-wall="wood_panel" class="px-2 py-1 rounded text-[11px] font-medium transition tab-pill" title="Wood Paneling">Wood</button>
+              <button data-wall="concrete" class="px-2 py-1 rounded text-[11px] font-medium transition tab-pill" title="Architectural Concrete">Concrete</button>
+              <button data-wall="ivory" class="px-2 py-1 rounded text-[11px] font-medium transition tab-pill" title="Ivory Wall">Ivory</button>
+            </div>
+          </div>
+
+          <!-- Night Mode / Backlight Glow Toggle & Quick Download -->
+          <div class="flex items-center space-x-2">
+            <button id="btnToggleNight" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-slate-700 bg-dark-900 hover:bg-slate-800 text-slate-300 transition text-[11px] font-medium">
+              <i data-lucide="moon" class="w-3.5 h-3.5 text-brand-400"></i>
+              <span id="nightModeLabel">Night Mode</span>
+            </button>
+            <button id="btnQuickSaveDesign" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-amber-600/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition text-[11px] font-medium">
+              <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+              <span>Save</span>
+            </button>
+            <button id="btnDownloadImage" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition text-[11px] font-medium" title="Download High-Res PNG Image">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Export PNG</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Name Plate Canvas Box -->
+        <div class="canvas-wrapper border border-slate-800 bg-dark-950 flex items-center justify-center p-2 sm:p-4">
+          <canvas id="plateCanvas" width="900" height="550" class="rounded-lg shadow-2xl"></canvas>
+        </div>
+
+        <!-- Live Specifications & Instant WhatsApp Action Bar -->
+        <div class="glass-panel rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-800">
+          <div class="w-full sm:w-auto">
+            <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Configuration Summary</div>
+            <div class="flex items-center space-x-2 text-xs font-medium text-slate-200">
+              <span id="specMaterialName" class="text-amber-400 font-bold">Natural Teakwood</span>
+              <span>•</span>
+              <span id="specDimensions">16" × 8"</span>
+              <span>•</span>
+              <span id="specLettering">3D Gold Acrylic</span>
+            </div>
+            <div class="text-xl font-extrabold text-white mt-1 flex items-baseline gap-2">
+              <span id="specTotalPrice" class="gold-gradient-text text-2xl">₹2,450</span>
+              <span class="text-[11px] text-slate-400 font-normal">All Inclusive (Free Delivery & Hardware)</span>
+            </div>
+          </div>
+
+          <!-- PRIMARY ACTION: Order via WhatsApp -->
+          <button id="btnOrderWhatsApp" class="w-full sm:w-auto whatsapp-btn px-6 py-3.5 rounded-xl font-bold text-sm flex items-center justify-center space-x-2 cursor-pointer shadow-lg">
+            <i data-lucide="message-circle" class="w-5 h-5 fill-white"></i>
+            <span>Order via WhatsApp</span>
+          </button>
+        </div>
+
+        <!-- Quality Guarantees Bar -->
+        <div class="grid grid-cols-3 gap-3 text-center text-[11px] text-slate-400">
+          <div class="p-2.5 rounded-lg bg-dark-950/60 border border-slate-800/80">
+            <i data-lucide="shield-check" class="w-4 h-4 mx-auto mb-1 text-emerald-400"></i>
+            <span class="font-semibold text-slate-300 block">All-Weather Proof</span>
+            UV & Rain Resistant
+          </div>
+          <div class="p-2.5 rounded-lg bg-dark-950/60 border border-slate-800/80">
+            <i data-lucide="truck" class="w-4 h-4 mx-auto mb-1 text-brand-400"></i>
+            <span class="font-semibold text-slate-300 block">Fast WhatsApp Delivery</span>
+            Dispatch in 3-4 Days
+          </div>
+          <div class="p-2.5 rounded-lg bg-dark-950/60 border border-slate-800/80">
+            <i data-lucide="wrench" class="w-4 h-4 mx-auto mb-1 text-blue-400"></i>
+            <span class="font-semibold text-slate-300 block">Brass Standoffs Free</span>
+            Complete Fitting Kit
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Customizer Controls Panel (5 Cols) -->
+      <div class="lg:col-span-5 flex flex-col space-y-4">
+        <div class="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+          
+          <!-- Customizer Navigation Tabs -->
+          <div class="flex border-b border-slate-800 bg-dark-950/70 p-1.5 text-xs font-semibold" id="customizerTabs">
+            <button data-tab="tab-text" class="flex-1 py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition text-amber-300 bg-slate-800/90 border border-amber-500/30">
+              <i data-lucide="type" class="w-3.5 h-3.5"></i>
+              <span>Text & Fonts</span>
+            </button>
+            <button data-tab="tab-material" class="flex-1 py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition text-slate-400 hover:text-slate-200">
+              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+              <span>Material & Shape</span>
+            </button>
+            <button data-tab="tab-motif" class="flex-1 py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition text-slate-400 hover:text-slate-200">
+              <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+              <span>Motifs</span>
+            </button>
+            <button data-tab="tab-pricing" class="flex-1 py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition text-slate-400 hover:text-slate-200">
+              <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+              <span>Pricing</span>
+            </button>
+          </div>
+
+          <!-- TAB 1: TEXT & FONTS -->
+          <div id="tab-text" class="p-5 space-y-5">
+            <!-- Line 1: Main Title -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-brand-500"></span> Line 1: Primary Family / House Name
+                </label>
+                <span class="text-[11px] text-slate-400">Main Focus</span>
+              </div>
+              <input type="text" id="inputLine1Text" value="The Sharmas" placeholder="e.g. The Sharmas, Villa Nirvana" 
+                class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+              
+              <!-- Font Family & Size controls for Line 1 -->
+              <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                <div>
+                  <label class="text-[11px] text-slate-400 mb-1 block">Font Style</label>
+                  <select id="selectLine1Font" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-brand-500">
+                    <option value="Cinzel" selected>Cinzel (Royal Serif)</option>
+                    <option value="Playfair Display">Playfair Display (Luxury)</option>
+                    <option value="Great Vibes">Great Vibes (Calligraphy)</option>
+                    <option value="Montserrat">Montserrat (Modern Clean)</option>
+                    <option value="Poppins">Poppins (Geometric)</option>
+                    <option value="Rozha One">Rozha One (Heritage)</option>
+                  </select>
+                </div>
+                <div>
+                  <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                    <span>Font Size</span>
+                    <span id="line1SizeVal">38px</span>
+                  </div>
+                  <input type="range" id="rangeLine1Size" min="20" max="54" value="38" class="w-full h-1.5 bg-slate-700 rounded-lg">
+                </div>
+              </div>
+            </div>
+
+            <!-- Line 2: Subtitle / Address -->
+            <div class="space-y-2 pt-2 border-t border-slate-800/80">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-slate-500"></span> Line 2: Flat / Plot / Subtitle
+                </label>
+                <span class="text-[11px] text-slate-400">Subtitle</span>
+              </div>
+              <input type="text" id="inputLine2Text" value="Villa Nirvana • 108" placeholder="e.g. Flat B-402, Green Heights" 
+                class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+              
+              <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                <div>
+                  <label class="text-[11px] text-slate-400 mb-1 block">Font Style</label>
+                  <select id="selectLine2Font" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-brand-500">
+                    <option value="Montserrat" selected>Montserrat (Modern Clean)</option>
+                    <option value="Poppins">Poppins (Geometric)</option>
+                    <option value="Cinzel">Cinzel (Royal Serif)</option>
+                    <option value="Playfair Display">Playfair Display (Luxury)</option>
+                    <option value="Great Vibes">Great Vibes (Calligraphy)</option>
+                  </select>
+                </div>
+                <div>
+                  <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                    <span>Font Size</span>
+                    <span id="line2SizeVal">16px</span>
+                  </div>
+                  <input type="range" id="rangeLine2Size" min="12" max="28" value="16" class="w-full h-1.5 bg-slate-700 rounded-lg">
+                </div>
+              </div>
+            </div>
+
+            <!-- Line 3: Tagline / Welcome -->
+            <div class="space-y-2 pt-2 border-t border-slate-800/80">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-slate-600"></span> Line 3: Welcome / Tagline (Optional)
+                </label>
+                <span class="text-[11px] text-slate-400">Tagline</span>
+              </div>
+              <input type="text" id="inputLine3Text" value="WELCOME" placeholder="e.g. WELCOME, BLESS OUR HOME" 
+                class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+            </div>
+
+            <!-- Lettering Finish & Style -->
+            <div class="space-y-2 pt-2 border-t border-slate-800/80">
+              <label class="text-xs font-bold text-slate-200 block">Lettering Finish & Technology</label>
+              <div class="grid grid-cols-2 gap-2 text-xs" id="letteringFinishGrid">
+                <button data-finish="gold_3d" class="p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-200 font-semibold text-left flex items-center space-x-2 tab-pill active">
+                  <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-200 shadow"></span>
+                  <div>
+                    <div class="leading-tight">3D Gold Acrylic</div>
+                    <div class="text-[10px] text-slate-400 font-normal">Raised + Embossed</div>
+                  </div>
+                </button>
+                <button data-finish="silver_mirror" class="p-2.5 rounded-lg border border-slate-700 bg-dark-900 hover:bg-slate-800 text-slate-200 font-semibold text-left flex items-center space-x-2 tab-pill">
+                  <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 to-slate-100 shadow"></span>
+                  <div>
+                    <div class="leading-tight">3D Mirror Silver</div>
+                    <div class="text-[10px] text-slate-400 font-normal">Polished Chrome</div>
+                  </div>
+                </button>
+                <button data-finish="laser_engraved" class="p-2.5 rounded-lg border border-slate-700 bg-dark-900 hover:bg-slate-800 text-slate-200 font-semibold text-left flex items-center space-x-2 tab-pill">
+                  <span class="w-4 h-4 rounded-full bg-neutral-900 border border-amber-900/50 shadow"></span>
+                  <div>
+                    <div class="leading-tight">Laser Engraved</div>
+                    <div class="text-[10px] text-slate-400 font-normal">Carved Inset</div>
+                  </div>
+                </button>
+                <button data-finish="matte_white" class="p-2.5 rounded-lg border border-slate-700 bg-dark-900 hover:bg-slate-800 text-slate-200 font-semibold text-left flex items-center space-x-2 tab-pill">
+                  <span class="w-4 h-4 rounded-full bg-white shadow"></span>
+                  <div>
+                    <div class="leading-tight">Matte White</div>
+                    <div class="text-[10px] text-slate-400 font-normal">Crisp Minimalist</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 2: MATERIAL, SHAPE & DIMENSIONS -->
+          <div id="tab-material" class="p-5 space-y-5 hidden">
+            <!-- Material Selection Cards -->
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-200 block">Select Base Plate Material</label>
+              <div class="grid grid-cols-2 gap-2 text-xs" id="materialGrid">
+                <!-- Teak Wood -->
+                <div data-mat="teak_wood" class="material-card active p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #592909, #743710, #4d2005);"></div>
+                  <div class="font-bold text-amber-200">Natural Teakwood</div>
+                  <div class="text-[10px] text-slate-400">Warm woodgrain, rich varnish</div>
+                </div>
+                <!-- Black Acrylic -->
+                <div data-mat="black_acrylic" class="material-card p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #1c1917, #09090b, #000000);"></div>
+                  <div class="font-bold text-slate-200">Glossy Black Acrylic</div>
+                  <div class="text-[10px] text-slate-400">High-gloss luxury obsidian</div>
+                </div>
+                <!-- Dual Layer -->
+                <div data-mat="dual_layer" class="material-card p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #451a03 50%, #38bdf844 50%);"></div>
+                  <div class="font-bold text-sky-200">Dual-Layer (Wood + Glass)</div>
+                  <div class="text-[10px] text-slate-400">Floating acrylic top layer</div>
+                </div>
+                <!-- Brushed Brass -->
+                <div data-mat="brushed_brass" class="material-card p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #c98a2c, #f3c368, #a66810);"></div>
+                  <div class="font-bold text-yellow-300">Brushed Brass Metal</div>
+                  <div class="text-[10px] text-slate-400">Golden metallic luster</div>
+                </div>
+                <!-- Slate Stone -->
+                <div data-mat="slate_stone" class="material-card p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #1e242b, #334155);"></div>
+                  <div class="font-bold text-slate-300">Dark Slate Stone</div>
+                  <div class="text-[10px] text-slate-400">Textured contemporary stone</div>
+                </div>
+                <!-- Walnut Wood -->
+                <div data-mat="walnut_wood" class="material-card p-2.5 bg-dark-900 border border-slate-700">
+                  <div class="h-9 w-full rounded mb-1.5" style="background: linear-gradient(135deg, #2d1e17, #1e140f);"></div>
+                  <div class="font-bold text-amber-100">Rich Walnut Wood</div>
+                  <div class="text-[10px] text-slate-400">Deep espresso chocolate</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shape Selector -->
+            <div class="space-y-2 pt-2 border-t border-slate-800">
+              <label class="text-xs font-bold text-slate-200 block">Plate Shape</label>
+              <div class="grid grid-cols-4 gap-2 text-xs" id="shapeGrid">
+                <button data-shape="rounded_rect" class="p-2 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-200 text-center font-medium tab-pill active">
+                  Rounded
+                </button>
+                <button data-shape="rect" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Rectangle
+                </button>
+                <button data-shape="arch" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Arch Dome
+                </button>
+                <button data-shape="oval" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Oval
+                </button>
+              </div>
+            </div>
+
+            <!-- Dimensions (Width & Height) -->
+            <div class="space-y-3 pt-2 border-t border-slate-800">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200">Plate Dimensions (Inches)</label>
+                <span class="text-amber-400 font-bold" id="dimensionsBadge">16" × 8" (128 sq. in.)</span>
+              </div>
+              <!-- Presets -->
+              <div class="grid grid-cols-4 gap-1.5 text-[11px]" id="sizePresets">
+                <button data-w="12" data-h="6" class="p-1.5 rounded border border-slate-700 hover:border-slate-500 bg-dark-900 text-slate-300">12" × 6"</button>
+                <button data-w="16" data-h="8" class="p-1.5 rounded border border-amber-500/40 bg-amber-500/15 text-amber-300 font-bold">16" × 8"</button>
+                <button data-w="18" data-h="10" class="p-1.5 rounded border border-slate-700 hover:border-slate-500 bg-dark-900 text-slate-300">18" × 10"</button>
+                <button data-w="24" data-h="12" class="p-1.5 rounded border border-slate-700 hover:border-slate-500 bg-dark-900 text-slate-300">24" × 12"</button>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                    <span>Width</span>
+                    <span id="widthVal">16 in</span>
+                  </div>
+                  <input type="range" id="rangeWidth" min="10" max="24" value="16" class="w-full h-1.5 bg-slate-700 rounded-lg">
+                </div>
+                <div>
+                  <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                    <span>Height</span>
+                    <span id="heightVal">8 in</span>
+                  </div>
+                  <input type="range" id="rangeHeight" min="5" max="14" value="8" class="w-full h-1.5 bg-slate-700 rounded-lg">
+                </div>
+              </div>
+            </div>
+
+            <!-- Hardware Mounting Screws & Standoffs -->
+            <div class="space-y-2 pt-2 border-t border-slate-800">
+              <label class="text-xs font-bold text-slate-200 block">Mounting Hardware Accents</label>
+              <div class="grid grid-cols-3 gap-2 text-xs" id="hardwareGrid">
+                <button data-hardware="brass_standoffs" class="p-2 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-200 text-center font-medium tab-pill active">
+                  Brass Studs
+                </button>
+                <button data-hardware="silver_screws" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Steel Screws
+                </button>
+                <button data-hardware="none" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Hidden / None
+                </button>
+              </div>
+            </div>
+
+            <!-- LED Backlight Illumination -->
+            <div class="space-y-2 pt-2 border-t border-slate-800">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> LED Backlighting (+₹450)
+                </label>
+                <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">With 12V Adapter</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs" id="backlightGrid">
+                <button data-backlight="none" class="p-2 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-200 text-center font-medium tab-pill active">
+                  No Backlight
+                </button>
+                <button data-backlight="warm_gold" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill flex items-center justify-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow"></span> Warm Gold
+                </button>
+                <button data-backlight="cool_white" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill flex items-center justify-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-sky-200 shadow"></span> Cool White
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 3: MOTIFS & EMBLEMS -->
+          <div id="tab-motif" class="p-5 space-y-5 hidden">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <label class="font-bold text-slate-200">Sacred & Decorative Emblems</label>
+                <span class="text-[11px] text-slate-400">Click to place on plate</span>
+              </div>
+
+              <!-- Motifs Grid -->
+              <div class="grid grid-cols-4 gap-2.5" id="motifCatalogGrid">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- Motif Positioning & Size -->
+            <div class="space-y-3 pt-3 border-t border-slate-800">
+              <label class="text-xs font-bold text-slate-200 block">Emblem Position</label>
+              <div class="grid grid-cols-3 gap-2 text-xs" id="motifPositionGrid">
+                <button data-pos="top_center" class="p-2 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-200 text-center font-medium tab-pill active">
+                  Top Center
+                </button>
+                <button data-pos="left_side" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Left Side
+                </button>
+                <button data-pos="right_side" class="p-2 rounded-lg border border-slate-700 bg-dark-900 text-slate-300 text-center font-medium tab-pill">
+                  Right Side
+                </button>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                  <span>Emblem Scale</span>
+                  <span id="motifSizeVal">44px</span>
+                </div>
+                <input type="range" id="rangeMotifSize" min="28" max="64" value="44" class="w-full h-1.5 bg-slate-700 rounded-lg">
+              </div>
+            </div>
+
+            <!-- Custom Logo / Crest Upload -->
+            <div class="pt-3 border-t border-slate-800">
+              <div class="text-xs font-bold text-slate-200 mb-1.5">Have a Custom Family Logo or Crest?</div>
+              <p class="text-[11px] text-slate-400 mb-3">You can also attach your custom family logo or artwork directly in the WhatsApp chat when ordering!</p>
+            </div>
+          </div>
+
+          <!-- TAB 4: PRICING BREAKDOWN & REVIEW -->
+          <div id="tab-pricing" class="p-5 space-y-4 hidden">
+            <div class="text-xs font-bold text-slate-200">Transparent Price Calculation</div>
+            
+            <div class="space-y-2.5 text-xs bg-dark-900/90 rounded-xl p-4 border border-slate-800">
+              <div class="flex justify-between items-center text-slate-300">
+                <span id="priceMatLabel">Base Plate (Teakwood 16" × 8")</span>
+                <span id="priceMatVal" class="font-semibold text-white">₹1,536</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300">
+                <span id="priceLetteringLabel">3D Raised Golden Acrylic Letters</span>
+                <span id="priceLetteringVal" class="font-semibold text-white">₹350</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300">
+                <span>Decorative Motif / Laser Detailing</span>
+                <span id="priceMotifVal" class="font-semibold text-white">₹200</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300">
+                <span id="priceHardwareLabel">Brass Standoff Fitting Kit</span>
+                <span id="priceHardwareVal" class="font-semibold text-emerald-400">FREE</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300" id="priceBacklightRow" style="display: none;">
+                <span>LED Illumination + 12V Power Adapter</span>
+                <span id="priceBacklightVal" class="font-semibold text-white">₹450</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300">
+                <span>All-India Safe Box Packing & Shipping</span>
+                <span class="font-semibold text-emerald-400">FREE</span>
+              </div>
+
+              <div class="pt-3 border-t border-slate-700/80 flex justify-between items-center text-sm font-bold">
+                <span class="text-slate-100">Estimated Total Amount:</span>
+                <span id="priceBreakdownTotal" class="text-lg gold-gradient-text">₹2,450</span>
+              </div>
+            </div>
+
+            <!-- Customer Special Instructions / Notes -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-300">Special Notes for the Artisan (Optional)</label>
+              <textarea id="orderSpecialNotes" rows="2" placeholder="e.g. Please add drill holes on sides, or dispatch before 15th..." class="w-full bg-dark-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-brand-500"></textarea>
+            </div>
+
+            <!-- Order via WhatsApp Action Button -->
+            <button id="btnPricingOrderWhatsApp" class="w-full whatsapp-btn py-3 rounded-xl font-bold text-sm flex items-center justify-center space-x-2">
+              <i data-lucide="message-circle" class="w-4 h-4 fill-white"></i>
+              <span>Order via WhatsApp Now</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- 1. WHATSAPP ORDER CONFIRMATION MODAL -->
+  <div id="modalOrder" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-dark-950 border border-slate-700 rounded-2xl max-w-lg w-full p-6 modal-dialog shadow-2xl relative">
+      <button id="btnCloseOrderModal" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-wa-500/20 text-wa-500 flex items-center justify-center">
+          <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white">Order via WhatsApp</h3>
+          <p class="text-xs text-slate-400">Your design snapshot is ready to send to our workshop</p>
+        </div>
+      </div>
+
+      <!-- Snapshot Preview Card -->
+      <div class="bg-dark-900 border border-slate-800 rounded-xl p-3 mb-4 text-center">
+        <img id="orderPreviewImg" src="" alt="Custom Name Plate Preview" class="rounded-lg shadow-md max-h-48 mx-auto object-contain mb-2">
+        <div class="flex items-center justify-center gap-3 text-xs">
+          <span class="text-emerald-400 flex items-center gap-1 font-medium">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> High-Res Image Generated
+          </span>
+          <button id="btnReDownloadImage" class="text-brand-400 hover:underline flex items-center gap-1">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Again
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Delivery Details Input (if guest) -->
+      <div class="space-y-3 mb-4 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-slate-300 font-semibold mb-1 block">Your Name *</label>
+            <input type="text" id="orderCustName" placeholder="Full Name" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+          </div>
+          <div>
+            <label class="text-slate-300 font-semibold mb-1 block">Phone / WhatsApp *</label>
+            <input type="tel" id="orderCustPhone" placeholder="Mobile Number" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+          </div>
+        </div>
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">Delivery Address & Pincode *</label>
+          <input type="text" id="orderCustAddress" placeholder="Door No, Street, City, Pincode" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+        </div>
+      </div>
+
+      <!-- Simple 3-Step Guide -->
+      <div class="bg-slate-900/80 rounded-xl p-3 text-slate-300 text-[11px] space-y-1.5 mb-5 border border-slate-800">
+        <div class="font-bold text-amber-300 flex items-center gap-1">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i> How WhatsApp Ordering Works:
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-white">1.</span>
+          <span>We have auto-downloaded your customized design preview to your phone/PC.</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-white">2.</span>
+          <span>Clicking the button below opens WhatsApp with all order specs pre-filled.</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-bold text-white">3.</span>
+          <span>Attach the downloaded design image into the chat. Our artisan confirms and starts carving!</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-3">
+        <button id="btnSendWhatsAppDirect" class="flex-1 whatsapp-btn py-3 rounded-xl font-bold text-sm flex items-center justify-center space-x-2">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Open WhatsApp & Send Order</span>
+        </button>
+        <button id="btnCopyOrderText" class="px-3.5 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold" title="Copy Order Specs to Clipboard">
+          <i data-lucide="copy" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. CUSTOMER AUTH / PROFILE MODAL -->
+  <div id="modalUserAuth" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-dark-950 border border-slate-700 rounded-2xl max-w-md w-full p-6 modal-dialog shadow-2xl relative">
+      <button id="btnCloseAuthModal" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">Customer Account</h3>
+        <p class="text-xs text-slate-400">Save designs, auto-fill orders, and view past history</p>
+      </div>
+
+      <form id="formAuth" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">Full Name</label>
+          <input type="text" id="authName" required placeholder="e.g. Rohan Sharma" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">Mobile / WhatsApp Number</label>
+          <input type="tel" id="authPhone" required placeholder="e.g. 9876543210" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">Delivery Address</label>
+          <textarea id="authAddress" rows="2" placeholder="House/Flat No, Society, City, Pincode" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-brand-500 to-amber-600 text-dark-950 hover:brightness-110 transition mt-2 shadow-lg">
+          Save Profile & Continue
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. TEMPLATES GALLERY MODAL -->
+  <div id="modalTemplates" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-dark-950 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 modal-dialog shadow-2xl relative max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i> Designer Templates Gallery
+          </h3>
+          <p class="text-xs text-slate-400">Select any template to instantly load and customize it</p>
+        </div>
+        <button id="btnCloseTemplatesModal" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto py-4 flex-1 pr-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="templateGalleryGrid">
+        <!-- Dynamically rendered via templates.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SAVED DESIGNS DRAWER / MODAL -->
+  <div id="modalSavedDesigns" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-dark-950 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 modal-dialog shadow-2xl relative max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="bookmark" class="w-5 h-5 text-amber-400"></i> My Saved Name Plates
+          </h3>
+          <p class="text-xs text-slate-400">Load, duplicate or order your previously saved designs</p>
+        </div>
+        <button id="btnCloseSavedModal" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto py-4 flex-1 pr-1" id="savedDesignsContainer">
+        <!-- Dynamically rendered list of saved designs -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. BUSINESS OWNER SETTINGS MODAL -->
+  <div id="modalBusinessSettings" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-dark-950 border border-slate-700 rounded-2xl max-w-md w-full p-6 modal-dialog shadow-2xl relative">
+      <button id="btnCloseSettingsModal" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center mx-auto mb-2 border border-slate-700">
+          <i data-lucide="store" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">Business & WhatsApp Settings</h3>
+        <p class="text-xs text-slate-400">Configure where customer orders are received</p>
+      </div>
+
+      <form id="formBusinessSettings" class="space-y-3.5 text-xs">
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">Business / Shop Name</label>
+          <input type="text" id="settingShopName" value="ArtisansPlate" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="text-slate-300 font-semibold mb-1 block">
+            Business WhatsApp Number <span class="text-amber-400 font-normal">(with Country Code, no + or spaces)</span>
+          </label>
+          <input type="text" id="settingWhatsAppNumber" value="919876543210" placeholder="e.g. 919876543210" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+          <p class="text-[10px] text-slate-400 mt-1">Example: India 919876543210, USA 1234567890</p>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-slate-300 font-semibold mb-1 block">Currency Symbol</label>
+            <input type="text" id="settingCurrency" value="₹" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+          </div>
+          <div>
+            <label class="text-slate-300 font-semibold mb-1 block">Pricing Rate Factor</label>
+            <input type="number" id="settingRateFactor" step="0.1" value="1.0" class="w-full bg-dark-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-sm bg-brand-500 text-dark-950 hover:bg-brand-400 transition mt-2">
+          Save Business Configuration
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-xs transition transform translate-y-20 opacity-0 duration-300 pointer-events-none">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMessage">Changes saved</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/motifs.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
