@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — First-Time Setup</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+.setup-steps { display:flex;gap:8px;margin-bottom:28px; }
+.step-dot { width:8px;height:8px;border-radius:50%;background:var(--border); }
+.step-dot.done { background:var(--success); }
+.step-dot.active { background:var(--brand);box-shadow:0 0 0 3px rgba(245,158,11,.25); }
+.secret-note { font-size:11px;color:var(--muted);padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:8px;margin-bottom:20px; }
+</style>
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-logo-placeholder">🛠️</div>
+    <h1 class="login-title">First-Time Setup</h1>
+    <p class="login-subtitle">Create the owner account. This page should be removed after setup.</p>
+
+    <div class="secret-note">
+      ⚠️ This page creates the <strong>Owner (super-admin)</strong> account. Once you have created your account, 
+      delete or rename <code>setup.html</code> so others cannot access it.
+    </div>
+
+    <form id="setupForm">
+      <div class="form-grid" style="grid-template-columns:1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Your Full Name *</label>
+          <input type="text" id="ownerName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address *</label>
+          <input type="email" id="ownerEmail" class="form-input" placeholder="owner@yourbusiness.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password (min 8 chars) *</label>
+          <input type="password" id="ownerPass" class="form-input" placeholder="••••••••" required minlength="8">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Setup Secret Code *</label>
+          <input type="text" id="setupSecret" class="form-input" placeholder="Enter the secret code" required>
+          <span style="font-size:11px;color:var(--muted);margin-top:4px;display:block">Default code: <strong>NAMEPLATE2024</strong> — Change it in firebase-config.js</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:20px;justify-content:center;padding:11px;" id="setupBtn">
+        Create Owner Account
+      </button>
+      <div id="setupError" style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:13px;display:none;"></div>
+    </form>
+
+    <p style="margin-top:16px;text-align:center;font-size:12px;color:var(--muted)">Already have account? <a href="index.html" style="color:var(--brand)">Sign in →</a></p>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { createAdminUser, auth }  from './js/auth.js';
+import { saveAdmin, saveStoreSettings } from './js/db.js';
+import { toast }                       from './js/utils.js';
+
+const SETUP_SECRET = 'NAMEPLATE2024'; // Change this before deploying!
+
+document.getElementById('setupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn      = document.getElementById('setupBtn');
+  const errEl    = document.getElementById('setupError');
+  const name     = document.getElementById('ownerName').value.trim();
+  const email    = document.getElementById('ownerEmail').value.trim();
+  const pass     = document.getElementById('ownerPass').value;
+  const secret   = document.getElementById('setupSecret').value.trim();
+
+  errEl.style.display = 'none';
+
+  if (secret !== SETUP_SECRET) {
+    errEl.textContent = 'Invalid setup secret code.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;"></span>&nbsp;Creating…';
+  btn.disabled = true;
+
+  try {
+    const user = await createAdminUser(email, pass, name, 'owner');
+    // Save admin record
+    await saveAdmin(user.uid, { name, email, role: 'owner' });
+    // Save basic store settings placeholder
+    await saveStoreSettings({ name: 'My Name Plate Shop', tagline: 'Custom Premium Name Plates', whatsapp: '' });
+    toast('Owner account created! Redirecting to settings…', 'success');
+    setTimeout(() => { window.location.href = 'settings.html'; }, 1800);
+  } catch(err) {
+    errEl.textContent = err.message || 'Failed to create account.';
+    errEl.style.display = 'block';
+    btn.innerHTML = 'Create Owner Account';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

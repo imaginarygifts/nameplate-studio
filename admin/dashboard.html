@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-layout">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img id="brand-logo" src="" alt="Logo" style="display:none;width:36px;height:36px;border-radius:8px;object-fit:cover;">
+    <div id="brand-icon" class="brand-icon">🪧</div>
+    <div class="brand-text">
+      <div class="name" id="brand-name">Admin Panel</div>
+      <div class="tag"  id="brand-tag">Loading…</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Main</div>
+    <a href="dashboard.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a href="orders.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      Orders
+    </a>
+    <a href="templates.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Templates
+    </a>
+    <a href="design-tools.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      Design Tools
+    </a>
+
+    <div class="nav-group-label" style="margin-top:8px">System</div>
+    <a href="settings.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button id="logoutBtn" class="btn btn-ghost" style="width:100%;justify-content:center;gap:6px;font-size:13px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ═════════════════════════════════════════════════ -->
+<div class="main-content">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn btn-ghost btn-icon" id="menuToggle" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <span class="topbar-title">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="userInitials">?</div>
+        <span id="userName">Loading…</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="icon">📋</div><div class="label">Total Templates</div><div class="value" id="statTemplates">—</div></div>
+      <div class="stat-card"><div class="icon">📦</div><div class="label">Total Orders</div><div class="value" id="statOrders">—</div></div>
+      <div class="stat-card"><div class="icon">🆕</div><div class="label">New Orders</div><div class="value" id="statNew">—</div></div>
+      <div class="stat-card"><div class="icon">🎨</div><div class="label">Plate Types</div><div class="value" id="statTypes">—</div></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card" style="margin-bottom:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Quick Actions</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <a href="templates.html" class="btn btn-primary"><span>＋</span> New Template</a>
+        <a href="design-tools.html" class="btn btn-ghost">🎨 Manage Design Tools</a>
+        <a href="orders.html" class="btn btn-ghost">📦 View All Orders</a>
+        <a href="settings.html" class="btn btn-ghost">⚙️ Store Settings</a>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h3 style="font-size:15px;font-weight:700">Recent Orders</h3>
+        <a href="orders.html" class="btn btn-ghost btn-sm">View All</a>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Status</th><th>Date</th><th></th></tr></thead>
+          <tbody id="recentOrdersBody">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { requireAuth, adminSignOut }     from './js/auth.js';
+import { getTemplates, getOrders, getNameplateTypes } from './js/db.js';
+import { loadBranding, setActiveNav, toast, fmtDate } from './js/utils.js';
+
+requireAuth(async (user, adminData) => {
+  // User pill
+  document.getElementById('userName').textContent    = adminData.name || user.email;
+  document.getElementById('userInitials').textContent = (adminData.name || 'A').charAt(0).toUpperCase();
+
+  // Load branding
+  await loadBranding();
+  setActiveNav();
+
+  // Load stats
+  const [templates, orders, types] = await Promise.all([getTemplates(), getOrders(), getNameplateTypes()]);
+  document.getElementById('statTemplates').textContent = templates.length;
+  document.getElementById('statOrders').textContent    = orders.length;
+  document.getElementById('statNew').textContent       = orders.filter(o => o.status === 'new' || !o.status).length;
+  document.getElementById('statTypes').textContent     = types.length;
+
+  // Recent orders table
+  const tbody = document.getElementById('recentOrdersBody');
+  const statusBadge = s => {
+    const map = { new:'badge-gold', approved:'badge-blue', in_production:'badge-info', dispatched:'badge-green', cancelled:'badge-red' };
+    return `<span class="badge ${map[s]||'badge-muted'}">${s||'new'}</span>`;
+  };
+  if (orders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No orders yet</p></td></tr>';
+  } else {
+    tbody.innerHTML = orders.slice(0,8).map(o => `
+      <tr>
+        <td><code style="font-size:12px;color:var(--brand)">#${o.orderId||o.id.slice(0,6).toUpperCase()}</code></td>
+        <td>${o.customerName||'—'}</td>
+        <td>${o.phone||'—'}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td style="font-size:12px;color:var(--muted)">${fmtDate(o.createdAt)}</td>
+        <td><a href="orders.html" class="btn btn-ghost btn-sm">View</a></td>
+      </tr>`).join('');
+  }
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  if (window.confirm('Are you sure you want to logout?')) await adminSignOut();
+});
+
+// Mobile menu
+const menuBtn = document.getElementById('menuToggle');
+const sidebar  = document.getElementById('sidebar');
+if (window.innerWidth <= 768) { menuBtn.style.display = 'flex'; }
+menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+</script>
+</body>
+</html>

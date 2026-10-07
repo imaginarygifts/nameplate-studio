@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Login</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .login-divider { display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted);font-size:12px; }
+  .login-divider::before,.login-divider::after { content:'';flex:1;height:1px;background:var(--border); }
+  .forgot-link { font-size:12px;color:var(--muted);text-align:right;display:block;margin-top:6px;cursor:pointer; }
+  .forgot-link:hover { color:var(--brand); }
+</style>
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <!-- Logo / Brand Icon -->
+    <img id="loginLogo" src="" alt="Logo" class="login-logo" style="display:none">
+    <div id="loginIcon" class="login-logo-placeholder">🪧</div>
+
+    <h1 class="login-title" id="loginTitle">Admin Panel</h1>
+    <p class="login-subtitle" id="loginSubtitle">Sign in to manage your business</p>
+
+    <!-- Login Form -->
+    <form id="loginForm" autocomplete="off">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="email" class="form-input" placeholder="admin@yourbusiness.com" required autocomplete="email">
+      </div>
+      <div class="form-group" style="margin-bottom:6px">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <a class="forgot-link" id="forgotLink">Forgot password?</a>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:20px;justify-content:center;padding:11px 0;font-size:14px;" id="loginBtn">
+        Sign In
+      </button>
+
+      <div id="loginError" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:13px;display:none;"></div>
+    </form>
+
+    <div class="login-divider">or</div>
+    <p style="text-align:center;font-size:12px;color:var(--muted)">
+      First time? <a href="setup.html" style="color:var(--brand);font-weight:600;">Set up owner account →</a>
+    </p>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { adminSignIn, onAuthStateChanged, auth, resetAdminPassword } from './js/auth.js';
+import { getStoreSettings }                                           from './js/db.js';
+import { toast }                                                      from './js/utils.js';
+
+// Redirect if already logged in
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    try {
+      const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const { db } = await import('./js/firebase-config.js');
+      const snap = await getDoc(doc(db, 'admins', user.uid));
+      if (snap.exists()) { window.location.href = 'dashboard.html'; return; }
+    } catch {}
+  }
+});
+
+// Load store branding
+(async () => {
+  try {
+    const s = await getStoreSettings();
+    if (s.name)    document.getElementById('loginTitle').textContent    = s.name;
+    if (s.tagline) document.getElementById('loginSubtitle').textContent = s.tagline;
+    if (s.logoUrl) {
+      const logo = document.getElementById('loginLogo');
+      const icon = document.getElementById('loginIcon');
+      logo.src = s.logoUrl; logo.style.display = 'block'; icon.style.display = 'none';
+    }
+    document.title = (s.name || 'Admin') + ' — Login';
+  } catch {}
+})();
+
+// Login form
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;"></span>&nbsp;Signing in…';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    await adminSignIn(email, password);
+    window.location.href = 'dashboard.html';
+  } catch (err) {
+    let msg = 'Invalid email or password. Please try again.';
+    if (err.message.includes('Unauthorized')) msg = 'This account is not authorized as an admin.';
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    btn.innerHTML = 'Sign In';
+    btn.disabled = false;
+  }
+});
+
+// Forgot password
+document.getElementById('forgotLink').addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  if (!email) { toast('Enter your email address first', 'error'); return; }
+  try {
+    await resetAdminPassword(email);
+    toast('Password reset email sent!', 'success');
+  } catch { toast('Could not send reset email', 'error'); }
+});
+</script>
+</body>
+</html>

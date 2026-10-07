@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design Tools — Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .tool-card {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; display: flex; flex-direction: column; gap: 10px; position: relative;
+  }
+  .tool-card:hover { border-color: rgba(245,158,11,.4); }
+  .tool-preview-box {
+    width: 100%; height: 90px; border-radius: 8px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    border: 1px solid var(--border); padding: 8px;
+  }
+  .tool-preview-box svg { max-width: 100%; max-height: 70px; }
+  .swatch-display {
+    width: 100%; height: 60px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .pill-types { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .pill-type-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.07); color: var(--muted); }
+</style>
+</head>
+<body class="admin-layout">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img id="brand-logo" src="" alt="Logo" style="display:none;width:36px;height:36px;border-radius:8px;object-fit:cover;">
+    <div id="brand-icon" class="brand-icon">🪧</div>
+    <div class="brand-text"><div class="name" id="brand-name">Admin</div><div class="tag" id="brand-tag"></div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Orders</a>
+    <a href="templates.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Templates</a>
+    <a href="design-tools.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>Design Tools</a>
+    <a href="settings.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer"><button id="logoutBtn" class="btn btn-ghost" style="width:100%;justify-content:center">← Logout</button></div>
+</aside>
+
+<!-- ══ MAIN CONTENT ═════════════════════════════════════════ -->
+<div class="main-content">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="topbar-title">🎨 Design Tools & Assets</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill"><div class="user-avatar" id="userInitials">?</div><span id="userName">…</span></div>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <!-- Sub-navigation tabs for all Design Tools -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="types">🪧 Plate Types</button>
+      <button class="tab-btn" data-tab="fonts">🔤 Fonts</button>
+      <button class="tab-btn" data-tab="logos">✨ Logos & Emblems</button>
+      <button class="tab-btn" data-tab="designs">🌿 Designs & Borders</button>
+      <button class="tab-btn" data-tab="shapes">📐 Shapes</button>
+      <button class="tab-btn" data-tab="plate-colors">🎨 Plate Colors</button>
+      <button class="tab-btn" data-tab="font-colors">✨ Font / Effect Colors</button>
+    </div>
+
+    <!-- ── 1. PLATE TYPES ─────────────────────────────────── -->
+    <div class="tab-panel active" id="tab-types">
+      <div class="page-header">
+        <div>
+          <h2>Name Plate Types</h2>
+          <p style="font-size:12px;color:var(--muted)">Manage manufacturing types and their default LED effect.</p>
+        </div>
+        <button class="btn btn-primary" id="addTypeBtn">＋ Add Plate Type</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>LED Effect</th><th>Base Rate / Sq.In</th><th>Description</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="typesBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 2. FONTS ──────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-fonts">
+      <div class="page-header">
+        <div>
+          <h2>Font Library</h2>
+          <p style="font-size:12px;color:var(--muted)">Add Google Fonts or custom font names and link to allowed plate types.</p>
+        </div>
+        <button class="btn btn-primary" id="addFontBtn">＋ Add Font</button>
+      </div>
+      <div class="grid-cards" id="fontsGrid"></div>
+    </div>
+
+    <!-- ── 3. LOGOS & EMBLEMS ────────────────────────────── -->
+    <div class="tab-panel" id="tab-logos">
+      <div class="page-header">
+        <div>
+          <h2>Logos & Sacred Emblems</h2>
+          <p style="font-size:12px;color:var(--muted)">Upload SVG files for Om, Ganesha, Swastik, Crests, etc.</p>
+        </div>
+        <button class="btn btn-primary" id="addLogoBtn">＋ Add Logo (SVG)</button>
+      </div>
+      <div class="grid-cards" id="logosGrid"></div>
+    </div>
+
+    <!-- ── 4. DESIGNS & BORDERS ──────────────────────────── -->
+    <div class="tab-panel" id="tab-designs">
+      <div class="page-header">
+        <div>
+          <h2>Designs, Dividers & Corners</h2>
+          <p style="font-size:12px;color:var(--muted)">Upload SVG designs like floral artwork, corner frames, rings, dividing lines.</p>
+        </div>
+        <button class="btn btn-primary" id="addDesignBtn">＋ Add Design (SVG)</button>
+      </div>
+      <div class="grid-cards" id="designsGrid"></div>
+    </div>
+
+    <!-- ── 5. SHAPES ─────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-shapes">
+      <div class="page-header">
+        <div>
+          <h2>Plate Cutout Shapes</h2>
+          <p style="font-size:12px;color:var(--muted)">Upload SVG shapes (Rectangle, Circle, Arch, Oval, Heart, Star, Custom Wood Cut).</p>
+        </div>
+        <button class="btn btn-primary" id="addShapeBtn">＋ Add Shape (SVG)</button>
+      </div>
+      <div class="grid-cards" id="shapesGrid"></div>
+    </div>
+
+    <!-- ── 6. PLATE BASE COLORS ──────────────────────────── -->
+    <div class="tab-panel" id="tab-plate-colors">
+      <div class="page-header">
+        <div>
+          <h2>Name Plate Base Colors & Textures</h2>
+          <p style="font-size:12px;color:var(--muted)">Manage solid colors, wood grains, acrylic finishes, and stone shaders.</p>
+        </div>
+        <button class="btn btn-primary" id="addPlateColorBtn">＋ Add Plate Color</button>
+      </div>
+      <div class="grid-cards" id="plateColorsGrid"></div>
+    </div>
+
+    <!-- ── 7. FONT / EFFECT COLORS ───────────────────────── -->
+    <div class="tab-panel" id="tab-font-colors">
+      <div class="page-header">
+        <div>
+          <h2>Font & Accent Colors</h2>
+          <p style="font-size:12px;color:var(--muted)">Add 3D metallic fills, fountain gold gradient codes, matte shades, and LED glow styles.</p>
+        </div>
+        <button class="btn btn-primary" id="addFontColorBtn">＋ Add Font Color</button>
+      </div>
+      <div class="grid-cards" id="fontColorsGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ UNIVERSAL ITEM MODAL ═════════════════════════════════ -->
+<div class="modal-overlay hidden" id="itemModal">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Item</h3>
+      <button class="btn btn-ghost btn-icon" id="closeModalBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="itemForm">
+        <input type="hidden" id="itemId">
+        <input type="hidden" id="itemCategory">
+
+        <!-- Dynamic Fields injected here -->
+        <div id="dynamicFields" style="display:flex;flex-direction:column;gap:14px"></div>
+
+        <!-- Multi-select Name Plate Types -->
+        <div class="form-group" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <label class="form-label">Allow on Name Plate Types (Select Multiple)</label>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:8px">Select which plate types can use this option:</p>
+          <div id="allowedTypesChips"></div>
+        </div>
+
+        <div id="formError" style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:13px;display:none;"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveItemBtn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { requireAuth, adminSignOut } from './js/auth.js';
+import {
+  getNameplateTypes, saveNameplateType, deleteNameplateType,
+  getFonts, getLogos, getDesigns, getShapes, getPlateColors, getFontColors,
+  addItem, updateItem, deleteItem, uploadFile
+} from './js/db.js';
+import { loadBranding, setActiveNav, toast, btnLoad, renderTagSelect } from './js/utils.js';
+
+let plateTypesCache = [];
+let selectedAllowedTypes = [];
+
+requireAuth(async (user, adminData) => {
+  document.getElementById('userName').textContent    = adminData.name || user.email;
+  document.getElementById('userInitials').textContent = (adminData.name||'A').charAt(0).toUpperCase();
+  await loadBranding();
+  setActiveNav();
+  await refreshAll();
+});
+
+// Tab switching
+document.querySelectorAll('.tab-bar .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+async function refreshAll() {
+  plateTypesCache = await getNameplateTypes();
+  renderPlateTypes();
+  renderFonts();
+  renderLogos();
+  renderDesigns();
+  renderShapes();
+  renderPlateColors();
+  renderFontColors();
+}
+
+// ── 1. RENDER PLATE TYPES ─────────────────────────────────────
+function renderPlateTypes() {
+  const tbody = document.getElementById('typesBody');
+  if (plateTypesCache.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No plate types added yet. Click "+ Add Plate Type" to create one.</td></tr>';
+    return;
+  }
+  const ledLabels = {
+    none: 'None',
+    shadow_led: 'Shadow LED (Soft Glow Around)',
+    backlit: 'Backlit (Background Glow)',
+    led_letter_box: 'LED Letter Box (Bright Letters)',
+    cutout_led: 'Cutout LED (Halo Illuminated)',
+    floating_led: 'Floating LED (Strip Backlight)'
+  };
+  tbody.innerHTML = plateTypesCache.map(t => `
+    <tr>
+      <td><strong>${t.name}</strong></td>
+      <td><span class="badge ${t.ledEffect!=='none'?'badge-gold':'badge-muted'}">${ledLabels[t.ledEffect] || t.ledEffect}</span></td>
+      <td>₹${t.ratePerSqIn || 10}/sq.in</td>
+      <td style="color:var(--muted);font-size:12px">${t.description || '—'}</td>
+      <td class="td-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editType('${t.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeType('${t.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── 2. RENDER FONTS ──────────────────────────────────────────
+async function renderFonts() {
+  const list = await getFonts();
+  const container = document.getElementById('fontsGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No fonts added yet.</p>'; return; }
+  container.innerHTML = list.map(f => `
+    <div class="tool-card">
+      <div class="tool-preview-box">
+        <span style="font-family:'${f.fontFamily}', sans-serif; font-size:22px; color:var(--brand)">${f.name}</span>
+      </div>
+      <div>
+        <strong style="font-size:13px">${f.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Family: <code>${f.fontFamily}</code></div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(f.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('fonts','${f.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('fonts','${f.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 3. RENDER LOGOS ──────────────────────────────────────────
+async function renderLogos() {
+  const list = await getLogos();
+  const container = document.getElementById('logosGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No logos added yet.</p>'; return; }
+  container.innerHTML = list.map(l => `
+    <div class="tool-card">
+      <div class="tool-preview-box">
+        ${l.svgCode ? l.svgCode : `<img src="${l.svgUrl}" style="max-height:70px">`}
+      </div>
+      <div>
+        <strong style="font-size:13px">${l.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Category: ${l.category || 'Emblem'}</div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(l.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('logos','${l.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('logos','${l.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 4. RENDER DESIGNS ────────────────────────────────────────
+async function renderDesigns() {
+  const list = await getDesigns();
+  const container = document.getElementById('designsGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No designs added yet.</p>'; return; }
+  container.innerHTML = list.map(d => `
+    <div class="tool-card">
+      <div class="tool-preview-box">
+        ${d.svgCode ? d.svgCode : `<img src="${d.svgUrl}" style="max-height:70px">`}
+      </div>
+      <div>
+        <strong style="font-size:13px">${d.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Type: ${d.type || 'Floral/Corner'}</div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(d.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('designs','${d.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('designs','${d.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 5. RENDER SHAPES ─────────────────────────────────────────
+async function renderShapes() {
+  const list = await getShapes();
+  const container = document.getElementById('shapesGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No shapes added yet.</p>'; return; }
+  container.innerHTML = list.map(s => `
+    <div class="tool-card">
+      <div class="tool-preview-box">
+        ${s.svgCode ? s.svgCode : `<img src="${s.svgUrl}" style="max-height:70px">`}
+      </div>
+      <div>
+        <strong style="font-size:13px">${s.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Orientation: ${s.orientation || 'Both'}</div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(s.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('shapes','${s.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('shapes','${s.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 6. RENDER PLATE COLORS ───────────────────────────────────
+async function renderPlateColors() {
+  const list = await getPlateColors();
+  const container = document.getElementById('plateColorsGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No plate colors added yet.</p>'; return; }
+  container.innerHTML = list.map(c => `
+    <div class="tool-card">
+      <div class="swatch-display" style="background:${c.fillCode || c.hexCode || '#222'}"></div>
+      <div>
+        <strong style="font-size:13px">${c.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Finish: ${c.finish || 'Solid / Glossy'}</div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(c.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('plate_colors','${c.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('plate_colors','${c.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 7. RENDER FONT COLORS ────────────────────────────────────
+async function renderFontColors() {
+  const list = await getFontColors();
+  const container = document.getElementById('fontColorsGrid');
+  if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No font colors added yet.</p>'; return; }
+  container.innerHTML = list.map(c => `
+    <div class="tool-card">
+      <div class="swatch-display" style="background:${c.fillCode || c.hexCode || '#f59e0b'}; display:flex; align-items:center; justify-content:center;">
+        <span style="font-weight:bold; font-size:18px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.7)">Abc</span>
+      </div>
+      <div>
+        <strong style="font-size:13px">${c.name}</strong>
+        <div style="font-size:11px;color:var(--muted)">Effect: ${c.effectType || 'Fountain / Metallic Fill'}</div>
+      </div>
+      <div class="pill-types">${renderAllowedPills(c.allowedTypes)}</div>
+      <div class="td-actions" style="margin-top:auto">
+        <button class="btn btn-ghost btn-sm" onclick="editGeneric('font_colors','${c.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeGeneric('font_colors','${c.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAllowedPills(allowed = []) {
+  if (!allowed || allowed.length === 0) return '<span class="pill-type-tag">All Types</span>';
+  return allowed.map(tid => {
+    const t = plateTypesCache.find(x => x.id === tid);
+    return `<span class="pill-type-tag">${t ? t.name : tid}</span>`;
+  }).join('');
+}
+
+// ── MODAL LOGIC & FORM BUILDER ────────────────────────────────
+const modal = document.getElementById('itemModal');
+document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+document.getElementById('cancelModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+
+// Add Plate Type Modal
+document.getElementById('addTypeBtn').addEventListener('click', () => {
+  openModal('types', 'Add Name Plate Type', `
+    <div class="form-group">
+      <label class="form-label">Plate Type Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Acrylic Glossy, Wooden Handcrafted, 3D LED Box" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">LED Effect *</label>
+      <select id="fieldLedEffect" class="form-select">
+        <option value="none">None (Non-illuminated)</option>
+        <option value="shadow_led">Shadow LED (Warm halo glow around letters)</option>
+        <option value="backlit">Backlit (LED glow behind plate)</option>
+        <option value="led_letter_box">LED Letter Box (Bright 3D illuminated letters)</option>
+        <option value="cutout_led">Cutout LED (Illuminated stencil/letters)</option>
+        <option value="floating_led">Floating LED (Strip backlit floating letters)</option>
+      </select>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Base Rate (₹ per Sq. Inch)</label>
+        <input type="number" id="fieldRate" class="form-input" value="12" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Default Thickness (mm)</label>
+        <input type="text" id="fieldThickness" class="form-input" placeholder="e.g. 5mm + 3mm">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description / Feature Summary</label>
+      <textarea id="fieldDesc" class="form-textarea" placeholder="Premium ultra-glossy finish with bevel edge..."></textarea>
+    </div>
+  `, true);
+});
+
+// Add Font Modal
+document.getElementById('addFontBtn').addEventListener('click', () => {
+  openModal('fonts', 'Add Font', `
+    <div class="form-group">
+      <label class="form-label">Font Display Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Cinzel, Great Vibes, Rozha One" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">CSS Font Family Name *</label>
+      <input type="text" id="fieldFontFamily" class="form-input" placeholder="e.g. 'Cinzel', serif" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Google Fonts Link / Import (Optional)</label>
+      <input type="text" id="fieldFontUrl" class="form-input" placeholder="e.g. https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap">
+    </div>
+  `);
+});
+
+// Add Logo Modal
+document.getElementById('addLogoBtn').addEventListener('click', () => {
+  openModal('logos', 'Add Logo / Sacred Motif (SVG)', `
+    <div class="form-group">
+      <label class="form-label">Logo / Emblem Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Lord Ganesha, Om ॐ, Swastik 卐, Royal Crest" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select id="fieldCategory" class="form-select">
+        <option value="Auspicious">Auspicious & Spiritual</option>
+        <option value="Nature">Nature & Animals</option>
+        <option value="Modern">Modern Icons</option>
+        <option value="Royal">Royal Crests</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Upload SVG File or Paste SVG Code *</label>
+      <div class="upload-zone" style="margin-bottom:8px">
+        <p>📁 Click or drag SVG file here</p>
+        <input type="file" id="fieldSvgFile" accept=".svg,image/svg+xml">
+      </div>
+      <textarea id="fieldSvgCode" class="form-textarea" placeholder="Or paste raw &lt;svg&gt; code here..."></textarea>
+    </div>
+  `);
+});
+
+// Add Design Modal
+document.getElementById('addDesignBtn').addEventListener('click', () => {
+  openModal('designs', 'Add Design / Divider / Corner (SVG)', `
+    <div class="form-group">
+      <label class="form-label">Design Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Floral Vine Corner, Dividing Line, Mandala Ring" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Design Placement Type</label>
+      <select id="fieldType" class="form-select">
+        <option value="corner">Corner Ornament</option>
+        <option value="divider">Horizontal Divider Line</option>
+        <option value="border">Full Border Frame</option>
+        <option value="ring">Mandala / Ring</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Upload SVG File or Paste SVG Code *</label>
+      <div class="upload-zone" style="margin-bottom:8px">
+        <p>📁 Click or drag SVG file here</p>
+        <input type="file" id="fieldSvgFile" accept=".svg,image/svg+xml">
+      </div>
+      <textarea id="fieldSvgCode" class="form-textarea" placeholder="Or paste raw &lt;svg&gt; code here..."></textarea>
+    </div>
+  `);
+});
+
+// Add Shape Modal
+document.getElementById('addShapeBtn').addEventListener('click', () => {
+  openModal('shapes', 'Add Plate Shape (SVG)', `
+    <div class="form-group">
+      <label class="form-label">Shape Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Modern Rectangle, Rounded Arch, Oval, Heart, Wood Cut" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Orientation Support</label>
+      <select id="fieldOrientation" class="form-select">
+        <option value="Both">Both (Horizontal & Vertical)</option>
+        <option value="Horizontal">Horizontal Only</option>
+        <option value="Vertical">Vertical Only</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Upload SVG Shape Outline *</label>
+      <div class="upload-zone" style="margin-bottom:8px">
+        <p>📁 Click or drag SVG shape file</p>
+        <input type="file" id="fieldSvgFile" accept=".svg,image/svg+xml">
+      </div>
+      <textarea id="fieldSvgCode" class="form-textarea" placeholder="Or paste raw &lt;svg&gt; path/shape code..."></textarea>
+    </div>
+  `);
+});
+
+// Add Plate Color Modal
+document.getElementById('addPlateColorBtn').addEventListener('click', () => {
+  openModal('plate_colors', 'Add Base Plate Color / Material Texture', `
+    <div class="form-group">
+      <label class="form-label">Color / Material Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. Glossy Obsidian Black, Teakwood Grain, Dark Slate, Brushed Brass" required>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Hex Color Code</label>
+        <input type="text" id="fieldHex" class="form-input" placeholder="#111827">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Finish / Texture Type</label>
+        <select id="fieldFinish" class="form-select">
+          <option value="Glossy Acrylic">Glossy Acrylic</option>
+          <option value="Matte Acrylic">Matte Frosted Acrylic</option>
+          <option value="Wood Grain">Wood Grain Varnish</option>
+          <option value="Metallic Brass">Metallic Brass</option>
+          <option value="Stainless Steel">Stainless Steel</option>
+          <option value="Natural Stone">Natural Slate / Stone</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fountain Fill / CSS Gradient / Texture Code</label>
+      <input type="text" id="fieldFillCode" class="form-input" placeholder="linear-gradient(135deg, #1c1917, #09090b)">
+      <span style="font-size:11px;color:var(--muted)">Supports CSS linear-gradient, radial-gradient, or procedural code</span>
+    </div>
+  `);
+});
+
+// Add Font Color Modal
+document.getElementById('addFontColorBtn').addEventListener('click', () => {
+  openModal('font_colors', 'Add Font / Effect Color', `
+    <div class="form-group">
+      <label class="form-label">Color Name *</label>
+      <input type="text" id="fieldName" class="form-input" placeholder="e.g. 3D Mirror Gold, 3D Chrome Silver, Warm Glow White, Matte Black" required>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Hex Base Color</label>
+        <input type="text" id="fieldHex" class="form-input" placeholder="#f59e0b">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Effect Type</label>
+        <select id="fieldEffectType" class="form-select">
+          <option value="3D Mirror Gold">3D Mirror Gold (Fountain Fill)</option>
+          <option value="3D Chrome Silver">3D Chrome Silver</option>
+          <option value="Laser Engraved Inset">Laser Engraved Inset</option>
+          <option value="Warm LED Glow">Warm LED Glow</option>
+          <option value="White LED Glow">White LED Glow</option>
+          <option value="Solid Matte">Solid Matte</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fountain Fill / CSS Metallic Gradient Code</label>
+      <input type="text" id="fieldFillCode" class="form-input" placeholder="linear-gradient(135deg, #fef08a 0%, #facc15 40%, #ca8a04 80%)">
+    </div>
+  `);
+});
+
+function openModal(category, title, fieldsHtml, hideAllowedTypes = false) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('itemCategory').value     = category;
+  document.getElementById('itemId').value           = '';
+  document.getElementById('dynamicFields').innerHTML= fieldsHtml;
+  document.getElementById('formError').style.display= 'none';
+
+  // Handle SVG file upload to text box auto-fill
+  const fileInput = document.getElementById('fieldSvgFile');
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('fieldSvgCode').value = ev.target.result;
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  // Tag select for allowed plate types
+  selectedAllowedTypes = [];
+  const chipsContainer = document.getElementById('allowedTypesChips');
+  if (hideAllowedTypes) {
+    chipsContainer.parentElement.style.display = 'none';
+  } else {
+    chipsContainer.parentElement.style.display = 'block';
+    renderTagSelect(chipsContainer, plateTypesCache, [], (sel) => {
+      selectedAllowedTypes = sel;
+    });
+  }
+
+  modal.classList.remove('hidden');
+}
+
+// ── SAVE ITEM HANDLER ─────────────────────────────────────────
+document.getElementById('saveItemBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveItemBtn');
+  const errEl = document.getElementById('formError');
+  const category = document.getElementById('itemCategory').value;
+  const id = document.getElementById('itemId').value;
+  const name = document.getElementById('fieldName')?.value.trim();
+
+  errEl.style.display = 'none';
+  if (!name) { errEl.textContent = 'Name is required'; errEl.style.display = 'block'; return; }
+
+  btnLoad(btn, true);
+
+  try {
+    if (category === 'types') {
+      const data = {
+        name,
+        ledEffect: document.getElementById('fieldLedEffect').value,
+        ratePerSqIn: parseFloat(document.getElementById('fieldRate').value) || 12,
+        thickness: document.getElementById('fieldThickness').value.trim(),
+        description: document.getElementById('fieldDesc').value.trim()
+      };
+      await saveNameplateType(id || null, data);
+      toast('Plate Type saved!', 'success');
+    } else {
+      let data = {
+        name,
+        allowedTypes: selectedAllowedTypes
+      };
+
+      if (category === 'fonts') {
+        data.fontFamily = document.getElementById('fieldFontFamily').value.trim();
+        data.fontUrl    = document.getElementById('fieldFontUrl')?.value.trim() || '';
+      } else if (category === 'logos') {
+        data.category = document.getElementById('fieldCategory').value;
+        data.svgCode  = document.getElementById('fieldSvgCode').value.trim();
+      } else if (category === 'designs') {
+        data.type    = document.getElementById('fieldType').value;
+        data.svgCode = document.getElementById('fieldSvgCode').value.trim();
+      } else if (category === 'shapes') {
+        data.orientation = document.getElementById('fieldOrientation').value;
+        data.svgCode     = document.getElementById('fieldSvgCode').value.trim();
+      } else if (category === 'plate_colors') {
+        data.hexCode  = document.getElementById('fieldHex').value.trim();
+        data.finish   = document.getElementById('fieldFinish').value;
+        data.fillCode = document.getElementById('fieldFillCode').value.trim() || data.hexCode;
+      } else if (category === 'font_colors') {
+        data.hexCode    = document.getElementById('fieldHex').value.trim();
+        data.effectType = document.getElementById('fieldEffectType').value;
+        data.fillCode   = document.getElementById('fieldFillCode').value.trim() || data.hexCode;
+      }
+
+      if (id) {
+        await updateItem(category, id, data);
+      } else {
+        await addItem(category, data);
+      }
+      toast('Item saved successfully!', 'success');
+    }
+
+    modal.classList.add('hidden');
+    await refreshAll();
+  } catch (err) {
+    errEl.textContent = 'Error: ' + err.message;
+    errEl.style.display = 'block';
+  } finally {
+    btnLoad(btn, false);
+  }
+});
+
+// Generic Delete and Edit handlers
+window.removeType = async (id) => {
+  if (!confirm('Delete this Name Plate Type?')) return;
+  await deleteNameplateType(id);
+  toast('Plate Type deleted', 'success');
+  await refreshAll();
+};
+
+window.removeGeneric = async (col, id) => {
+  if (!confirm('Delete this item?')) return;
+  await deleteItem(col, id);
+  toast('Item deleted', 'success');
+  await refreshAll();
+};
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => { if (confirm('Logout?')) await adminSignOut(); });
+</script>
+</body>
+</html>

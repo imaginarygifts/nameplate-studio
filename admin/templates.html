@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Templates — Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .templates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .template-item-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column; transition: all .2s ease;
+  }
+  .template-item-card:hover { border-color: rgba(245,158,11,.5); transform: translateY(-2px); }
+  .template-thumb {
+    width: 100%; height: 160px; background: #000; display: flex; align-items: center;
+    justify-content: center; overflow: hidden; position: relative;
+  }
+  .template-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .template-info { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+  /* ── Template Editor Layout ────────────────────────────── */
+  .builder-layout { display: flex; gap: 20px; min-height: 520px; }
+  .builder-canvas-panel {
+    flex: 1.1; position: sticky; top: 10px; height: fit-content;
+    background: #090a0f; border-radius: 14px; border: 1px solid var(--border);
+    padding: 16px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; position: relative; min-height: 420px; overflow: hidden;
+  }
+  .builder-controls-panel { flex: 1.2; overflow-y: auto; max-height: 75vh; padding-right: 6px; }
+
+  /* Canvas Stage */
+  #canvasStage {
+    width: 100%; max-width: 480px; aspect-ratio: 16/10; border-radius: 12px;
+    position: relative; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,.6); transition: all .3s ease;
+    user-select: none;
+  }
+
+  /* Layers draggable inside plate */
+  .canvas-layer-el {
+    position: absolute; cursor: move; border: 1px dashed transparent;
+    padding: 4px; border-radius: 4px; transform: translate(-50%, -50%);
+    white-space: nowrap; line-height: 1.1;
+  }
+  .canvas-layer-el:hover, .canvas-layer-el.selected {
+    border-color: var(--brand); background: rgba(245,158,11,.1);
+  }
+
+  /* Background switcher button */
+  .bg-switch-btn {
+    position: absolute; bottom: 12px; right: 12px; z-index: 10;
+    padding: 6px 12px; border-radius: 20px; font-size: 11px;
+    background: rgba(0,0,0,.8); border: 1px solid rgba(255,255,255,.2);
+    color: #fff; cursor: pointer; display: flex; align-items: center; gap: 5px;
+  }
+  .bg-options-menu {
+    position: absolute; bottom: 44px; right: 12px; z-index: 20;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px; display: flex; flex-direction: column; gap: 4px; width: 140px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.5);
+  }
+  .bg-opt-btn {
+    padding: 5px 8px; border-radius: 6px; font-size: 11px; text-align: left;
+    background: transparent; color: var(--text); border: none; cursor: pointer;
+  }
+  .bg-opt-btn:hover { background: var(--bg3); color: var(--brand); }
+
+  /* Layer List Item */
+  .layer-row {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px; gap: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .builder-layout { flex-direction: column; }
+    .builder-canvas-panel { position: sticky; top: 0; z-index: 30; }
+  }
+</style>
+</head>
+<body class="admin-layout">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img id="brand-logo" src="" alt="Logo" style="display:none;width:36px;height:36px;border-radius:8px;object-fit:cover;">
+    <div id="brand-icon" class="brand-icon">🪧</div>
+    <div class="brand-text"><div class="name" id="brand-name">Admin</div><div class="tag" id="brand-tag"></div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Orders</a>
+    <a href="templates.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Templates</a>
+    <a href="design-tools.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>Design Tools</a>
+    <a href="settings.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer"><button id="logoutBtn" class="btn btn-ghost" style="width:100%;justify-content:center">← Logout</button></div>
+</aside>
+
+<!-- ══ MAIN CONTENT ═════════════════════════════════════════ -->
+<div class="main-content">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="topbar-title">✨ Templates & Showcase Products</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill"><div class="user-avatar" id="userInitials">?</div><span id="userName">…</span></div>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <div class="page-header">
+      <div>
+        <h2>Name Plate Templates</h2>
+        <p style="font-size:12px;color:var(--muted)">Pre-designed templates for customers to browse, customize and order.</p>
+      </div>
+      <button class="btn btn-primary" id="openCreateTemplateBtn">＋ Create Template</button>
+    </div>
+
+    <!-- Templates Catalog Grid -->
+    <div class="templates-grid" id="templatesGrid">
+      <p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0">Loading templates…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FULL BUILDER MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay hidden" id="builderModal">
+  <div class="modal-box modal-xl">
+    <div class="modal-header">
+      <h3 id="builderModalTitle">Create Name Plate Template</h3>
+      <button class="btn btn-ghost btn-icon" id="closeBuilderBtn">✕</button>
+    </div>
+
+    <div class="modal-body" style="padding:16px;">
+      <div class="builder-layout">
+
+        <!-- ── LEFT: LIVE CANVAS PREVIEW ──────────────────── -->
+        <div class="builder-canvas-panel" id="canvasWallWrapper">
+          
+          <!-- Stage: The Name Plate -->
+          <div id="canvasStage">
+            <!-- Floating strip for floating LED effect -->
+            <div id="floatingStrip" style="position:absolute; width:100%; height:42px; background:rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.1); display:none; z-index:1;"></div>
+            
+            <!-- Draggable Layers rendered here -->
+            <div id="layersContainer" style="position:absolute; inset:0; z-index:2;"></div>
+          </div>
+
+          <!-- Wall Background Switcher Menu -->
+          <button class="bg-switch-btn" id="bgSwitchBtn">🖼️ Wall Preview ▾</button>
+          <div class="bg-options-menu hidden" id="bgMenu">
+            <button class="bg-opt-btn" data-bg="brick">🧱 Brick Wall</button>
+            <button class="bg-opt-btn" data-bg="tile">◽ Modern Tile</button>
+            <button class="bg-opt-btn" data-bg="stone">🪨 Slate Stone</button>
+            <button class="bg-opt-btn" data-bg="wood">🪵 Wood Paneling</button>
+            <button class="bg-opt-btn" data-bg="grass">🌿 Foliage Wall</button>
+            <button class="bg-opt-btn" data-bg="dark">⬛ Dark Studio</button>
+            <label class="bg-opt-btn" style="cursor:pointer;display:block">
+              📁 Upload Custom
+              <input type="file" id="customBgUpload" accept="image/*" style="display:none">
+            </label>
+          </div>
+        </div>
+
+        <!-- ── RIGHT: CONFIGURATION & LAYERS ─────────────── -->
+        <div class="builder-controls-panel">
+          <form id="templateForm">
+            <input type="hidden" id="tplId">
+
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Template Name *</label>
+              <input type="text" id="tplName" class="form-input" placeholder="e.g. Royal Heritage Villa Plate" required>
+            </div>
+
+            <div class="form-grid-2" style="margin-bottom:14px">
+              <div class="form-group">
+                <label class="form-label">Name Plate Type *</label>
+                <select id="tplTypeSelect" class="form-select" required></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Plate Shape *</label>
+                <select id="tplShapeSelect" class="form-select"></select>
+              </div>
+            </div>
+
+            <div class="form-grid-2" style="margin-bottom:14px">
+              <div class="form-group">
+                <label class="form-label">Orientation</label>
+                <select id="tplOrientation" class="form-select">
+                  <option value="horizontal">Horizontal (Landscape)</option>
+                  <option value="vertical">Vertical (Portrait)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Standard Size</label>
+                <select id="tplSize" class="form-select">
+                  <option value="12x6">12" × 6" (Apartment)</option>
+                  <option value="16x8" selected>16" × 8" (Standard Villa)</option>
+                  <option value="18x10">18" × 10" (Grand House)</option>
+                  <option value="24x12">24" × 12" (Commercial / Gate)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:18px">
+              <label class="form-label">Base Plate Color / Material</label>
+              <select id="tplBaseColorSelect" class="form-select"></select>
+            </div>
+
+            <!-- ── ADD LAYERS ACTIONS ─────────────────────── -->
+            <div style="border-top:1px solid var(--border); padding-top:14px; margin-bottom:14px">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                <label class="form-label" style="margin:0">Custom Elements & Layers</label>
+                <div style="display:flex; gap:6px">
+                  <button type="button" class="btn btn-ghost btn-sm" id="addTextLayerBtn">＋ Add Text</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="addLogoLayerBtn">＋ Add Logo</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="addDesignLayerBtn">＋ Add Design</button>
+                </div>
+              </div>
+
+              <!-- List of active layers -->
+              <div id="layersList"></div>
+            </div>
+
+            <div class="form-grid-2" style="margin-bottom:14px">
+              <div class="form-group">
+                <label class="form-label">Starting Price Estimate (₹)</label>
+                <input type="number" id="tplBasePrice" class="form-input" value="1850">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Badge Label</label>
+                <input type="text" id="tplBadge" class="form-input" placeholder="e.g. Bestseller, Trending, Luxury">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description / Features</label>
+              <textarea id="tplDesc" class="form-textarea" placeholder="Handcrafted with 3D raised golden letters and warm LED glow..."></textarea>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelBuilderBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveTemplateBtn">💾 Save Template</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { requireAuth, adminSignOut } from './js/auth.js';
+import {
+  getTemplates, addItem, updateItem, deleteItem,
+  getNameplateTypes, getShapes, getFonts, getLogos, getDesigns, getPlateColors, getFontColors,
+  uploadFile
+} from './js/db.js';
+import { loadBranding, setActiveNav, toast, btnLoad, ledClass } from './js/utils.js';
+
+let plateTypes = [];
+let shapes = [];
+let fonts = [];
+let logos = [];
+let designs = [];
+let plateColors = [];
+let fontColors = [];
+
+// Builder State
+let currentLayers = [];
+let activeLayerIndex = null;
+let currentBg = 'brick';
+let currentPlateTypeObj = null;
+
+requireAuth(async (user, adminData) => {
+  document.getElementById('userName').textContent    = adminData.name || user.email;
+  document.getElementById('userInitials').textContent = (adminData.name||'A').charAt(0).toUpperCase();
+  await loadBranding();
+  setActiveNav();
+  await loadAssetsCache();
+  await loadTemplatesCatalog();
+});
+
+async function loadAssetsCache() {
+  [plateTypes, shapes, fonts, logos, designs, plateColors, fontColors] = await Promise.all([
+    getNameplateTypes(), getShapes(), getFonts(), getLogos(), getDesigns(), getPlateColors(), getFontColors()
+  ]);
+
+  // Populate builder selects
+  const typeSel = document.getElementById('tplTypeSelect');
+  typeSel.innerHTML = plateTypes.map(t => `<option value="${t.id}">${t.name} (${t.ledEffect})</option>`).join('');
+
+  const shapeSel = document.getElementById('tplShapeSelect');
+  shapeSel.innerHTML = shapes.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  if (shapes.length === 0) {
+    shapeSel.innerHTML = '<option value="rounded_rect">Rounded Rectangle</option><option value="rect">Rectangle</option><option value="oval">Oval</option><option value="arch">Arch Dome</option>';
+  }
+
+  const colorSel = document.getElementById('tplBaseColorSelect');
+  colorSel.innerHTML = plateColors.map(c => `<option value="${c.id}" data-fill="${c.fillCode||c.hexCode}">${c.name} (${c.finish||'Solid'})</option>`).join('');
+  if (plateColors.length === 0) {
+    colorSel.innerHTML = '<option value="teak" data-fill="linear-gradient(135deg, #592909, #743710)">Natural Teakwood</option><option value="black" data-fill="#09090b">Glossy Obsidian Black</option><option value="brass" data-fill="linear-gradient(135deg, #c98a2c, #f3c368)">Brushed Brass</option>';
+  }
+}
+
+// ── LOAD TEMPLATES CATALOG ────────────────────────────────────
+async function loadTemplatesCatalog() {
+  const templates = await getTemplates();
+  const grid = document.getElementById('templatesGrid');
+  if (templates.length === 0) {
+    grid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0">No templates created yet. Click "+ Create Template" to build one.</p>';
+    return;
+  }
+  grid.innerHTML = templates.map(tpl => `
+    <div class="template-item-card">
+      <div class="template-thumb">
+        ${tpl.thumbnailUrl ? `<img src="${tpl.thumbnailUrl}" alt="${tpl.name}">` : `<div style="color:var(--brand);font-weight:bold">${tpl.name}</div>`}
+        ${tpl.badge ? `<span class="badge badge-gold" style="position:absolute;top:8px;right:8px">${tpl.badge}</span>` : ''}
+      </div>
+      <div class="template-info">
+        <strong style="font-size:14px">${tpl.name}</strong>
+        <div style="font-size:11.5px;color:var(--muted)">Type: ${tpl.typeName || 'Standard'} • Size: ${tpl.size || '16x8'}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--brand);margin-top:2px">₹${tpl.basePrice || 1850}</div>
+        <div class="td-actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="editTemplate('${tpl.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="removeTemplate('${tpl.id}')">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── BUILDER MODAL LOGIC ───────────────────────────────────────
+const builderModal = document.getElementById('builderModal');
+document.getElementById('openCreateTemplateBtn').addEventListener('click', () => openBuilder());
+document.getElementById('closeBuilderBtn').addEventListener('click', () => builderModal.classList.add('hidden'));
+document.getElementById('cancelBuilderBtn').addEventListener('click', () => builderModal.classList.add('hidden'));
+
+function openBuilder(existing = null) {
+  document.getElementById('tplId').value = existing ? existing.id : '';
+  document.getElementById('tplName').value = existing ? existing.name : '';
+  document.getElementById('tplBasePrice').value = existing ? (existing.basePrice || 1850) : 1850;
+  document.getElementById('tplBadge').value = existing ? (existing.badge || '') : '';
+  document.getElementById('tplDesc').value = existing ? (existing.description || '') : '';
+  
+  if (existing && existing.typeId) document.getElementById('tplTypeSelect').value = existing.typeId;
+  if (existing && existing.shapeId) document.getElementById('tplShapeSelect').value = existing.shapeId;
+  if (existing && existing.orientation) document.getElementById('tplOrientation').value = existing.orientation;
+  if (existing && existing.size) document.getElementById('tplSize').value = existing.size;
+  if (existing && existing.baseColorId) document.getElementById('tplBaseColorSelect').value = existing.baseColorId;
+
+  currentLayers = existing && existing.layers ? JSON.parse(JSON.stringify(existing.layers)) : [
+    { type: 'text', content: 'The Sharmas', x: 50, y: 45, size: 28, font: 'Cinzel', colorId: 'gold_3d' },
+    { type: 'text', content: 'Villa Nirvana • 108', x: 50, y: 70, size: 14, font: 'Montserrat', colorId: 'gold_3d' }
+  ];
+
+  updateCanvasAppearance();
+  renderLayers();
+  builderModal.classList.remove('hidden');
+}
+
+// ── CANVAS VISUAL RENDERING & LED SHADERS ─────────────────────
+function updateCanvasAppearance() {
+  const stage = document.getElementById('canvasStage');
+  const typeId = document.getElementById('tplTypeSelect').value;
+  currentPlateTypeObj = plateTypes.find(t => t.id === typeId) || { ledEffect: 'none' };
+
+  // Base Color
+  const colorSel = document.getElementById('tplBaseColorSelect');
+  const opt = colorSel.options[colorSel.selectedIndex];
+  const fill = opt ? opt.getAttribute('data-fill') : '#1c1917';
+  stage.style.background = fill;
+
+  // Orientation & Shape
+  const orient = document.getElementById('tplOrientation').value;
+  stage.style.aspectRatio = orient === 'vertical' ? '10/16' : '16/10';
+
+  // Floating Strip
+  const strip = document.getElementById('floatingStrip');
+  if (currentPlateTypeObj.ledEffect === 'floating_led') {
+    strip.style.display = 'block';
+  } else {
+    strip.style.display = 'none';
+  }
+
+  // LED Backlight on stage perimeter
+  if (currentPlateTypeObj.ledEffect === 'backlit' || currentPlateTypeObj.ledEffect === 'floating_led') {
+    stage.style.boxShadow = '0 0 30px rgba(251, 191, 36, 0.5), 0 0 60px rgba(245, 158, 11, 0.25), 0 20px 40px rgba(0,0,0,.7)';
+  } else {
+    stage.style.boxShadow = '0 20px 40px rgba(0,0,0,.6)';
+  }
+
+  // Wall Background
+  setWallBackground(currentBg);
+}
+
+// Change Wall Background
+function setWallBackground(bg) {
+  currentBg = bg;
+  const wrapper = document.getElementById('canvasWallWrapper');
+  if (bg === 'brick') {
+    wrapper.style.background = 'radial-gradient(circle, #78350f 0%, #261b17 100%)';
+  } else if (bg === 'tile') {
+    wrapper.style.background = 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)';
+  } else if (bg === 'stone') {
+    wrapper.style.background = 'radial-gradient(circle, #334155 0%, #0f172a 100%)';
+  } else if (bg === 'wood') {
+    wrapper.style.background = 'linear-gradient(135deg, #451a03 0%, #1c0a00 100%)';
+  } else if (bg === 'grass') {
+    wrapper.style.background = 'radial-gradient(circle, #14532d 0%, #052e16 100%)';
+  } else {
+    wrapper.style.background = '#090a0f';
+  }
+}
+
+// Background menu toggle
+document.getElementById('bgSwitchBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('bgMenu').classList.toggle('hidden');
+});
+document.querySelectorAll('.bg-opt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const bg = btn.dataset.bg;
+    if (bg) setWallBackground(bg);
+    document.getElementById('bgMenu').classList.add('hidden');
+  });
+});
+document.getElementById('customBgUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('canvasWallWrapper').style.background = `url(${ev.target.result}) center/cover no-repeat`;
+    document.getElementById('bgMenu').classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+});
+
+// React to form changes
+['tplTypeSelect', 'tplShapeSelect', 'tplOrientation', 'tplBaseColorSelect'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    updateCanvasAppearance();
+    renderLayers();
+  });
+});
+
+// ── RENDER DRAGGABLE LAYERS ───────────────────────────────────
+function renderLayers() {
+  const container = document.getElementById('layersContainer');
+  const listEl = document.getElementById('layersList');
+  container.innerHTML = '';
+  listEl.innerHTML = '';
+
+  const effect = currentPlateTypeObj ? currentPlateTypeObj.ledEffect : 'none';
+
+  currentLayers.forEach((layer, idx) => {
+    // 1. Stage element
+    const el = document.createElement('div');
+    el.className = 'canvas-layer-el ' + ledClass(effect);
+    el.style.left = layer.x + '%';
+    el.style.top = layer.y + '%';
+    el.dataset.index = idx;
+
+    if (layer.type === 'text') {
+      el.style.fontFamily = layer.font || 'Cinzel';
+      el.style.fontSize = (layer.size || 24) + 'px';
+      el.style.color = '#f59e0b'; // Gold
+      el.textContent = layer.content || 'Text';
+
+      // Specific LED Letter effects
+      if (effect === 'led_letter_box') {
+        el.style.textShadow = '0 0 5px #fff, 0 0 12px #fbbf24, 0 0 25px #f59e0b';
+        el.style.color = '#fffde7';
+      } else if (effect === 'shadow_led') {
+        el.style.textShadow = '0 0 10px #ff8c00, 0 0 20px #ff8c00';
+      } else if (effect === 'cutout_led') {
+        el.style.filter = 'drop-shadow(0 0 6px #fbbf24)';
+        el.style.color = '#fff';
+      }
+    } else if (layer.type === 'logo' || layer.type === 'design') {
+      el.style.width = (layer.size || 40) + 'px';
+      el.style.height = (layer.size || 40) + 'px';
+      el.innerHTML = layer.svgCode || '★';
+      if (effect === 'shadow_led' || effect === 'cutout_led') {
+        el.style.filter = 'drop-shadow(0 0 8px #f59e0b)';
+      }
+    }
+
+    // Dragging Logic
+    makeDraggable(el, idx);
+    container.appendChild(el);
+
+    // 2. Control Row in Right Panel
+    const row = document.createElement('div');
+    row.className = 'layer-row';
+    row.innerHTML = `
+      <div style="flex:1">
+        <strong style="font-size:12px">${layer.type.toUpperCase()}: ${layer.content || layer.name || 'Element'}</strong>
+        <div style="font-size:11px;color:var(--muted)">Size: ${layer.size}px • Pos: (${Math.round(layer.x)}%, ${Math.round(layer.y)}%)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="range" min="10" max="60" value="${layer.size||24}" style="width:70px" oninput="resizeLayer(${idx}, this.value)">
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteLayer(${idx})">✕</button>
+      </div>
+    `;
+    listEl.appendChild(row);
+  });
+}
+
+function makeDraggable(el, index) {
+  let isDragging = false;
+  let startX, startY;
+
+  el.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    document.querySelectorAll('.canvas-layer-el').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+
+    function onMouseMove(ev) {
+      if (!isDragging) return;
+      const stage = document.getElementById('canvasStage');
+      const rect = stage.getBoundingClientRect();
+      const xPercent = Math.max(5, Math.min(95, ((ev.clientX - rect.left) / rect.width) * 100));
+      const yPercent = Math.max(5, Math.min(95, ((ev.clientY - rect.top) / rect.height) * 100));
+
+      currentLayers[index].x = xPercent;
+      currentLayers[index].y = yPercent;
+      el.style.left = xPercent + '%';
+      el.style.top = yPercent + '%';
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      renderLayers();
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+window.resizeLayer = (idx, val) => {
+  currentLayers[idx].size = parseInt(val);
+  renderLayers();
+};
+
+window.deleteLayer = (idx) => {
+  currentLayers.splice(idx, 1);
+  renderLayers();
+};
+
+// Add Layer Buttons
+document.getElementById('addTextLayerBtn').addEventListener('click', () => {
+  const text = prompt('Enter text for this layer:', 'Bless This Home');
+  if (!text) return;
+  currentLayers.push({ type: 'text', content: text, x: 50, y: 50, size: 22, font: 'Montserrat', colorId: 'gold_3d' });
+  renderLayers();
+});
+
+document.getElementById('addLogoLayerBtn').addEventListener('click', () => {
+  if (logos.length === 0) {
+    currentLayers.push({ type: 'logo', name: 'Lord Ganesha', svgCode: '<svg viewBox="0 0 24 24" fill="#f59e0b"><circle cx="12" cy="12" r="10"/></svg>', x: 50, y: 25, size: 36 });
+  } else {
+    const l = logos[0];
+    currentLayers.push({ type: 'logo', name: l.name, svgCode: l.svgCode, x: 50, y: 25, size: 36 });
+  }
+  renderLayers();
+});
+
+document.getElementById('addDesignLayerBtn').addEventListener('click', () => {
+  if (designs.length === 0) {
+    currentLayers.push({ type: 'design', name: 'Floral Corner', svgCode: '<svg viewBox="0 0 24 24" fill="#f59e0b"><rect width="24" height="24" rx="4"/></svg>', x: 80, y: 20, size: 30 });
+  } else {
+    const d = designs[0];
+    currentLayers.push({ type: 'design', name: d.name, svgCode: d.svgCode, x: 80, y: 20, size: 30 });
+  }
+  renderLayers();
+});
+
+// ── SAVE TEMPLATE HANDLER ─────────────────────────────────────
+document.getElementById('saveTemplateBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveTemplateBtn');
+  const name = document.getElementById('tplName').value.trim();
+  const id = document.getElementById('tplId').value;
+
+  if (!name) { toast('Template name is required', 'error'); return; }
+
+  btnLoad(btn, true);
+
+  try {
+    const typeId = document.getElementById('tplTypeSelect').value;
+    const typeObj = plateTypes.find(t => t.id === typeId);
+
+    const templateData = {
+      name,
+      typeId,
+      typeName: typeObj ? typeObj.name : '',
+      shapeId: document.getElementById('tplShapeSelect').value,
+      orientation: document.getElementById('tplOrientation').value,
+      size: document.getElementById('tplSize').value,
+      baseColorId: document.getElementById('tplBaseColorSelect').value,
+      basePrice: parseFloat(document.getElementById('tplBasePrice').value) || 1850,
+      badge: document.getElementById('tplBadge').value.trim(),
+      description: document.getElementById('tplDesc').value.trim(),
+      layers: currentLayers,
+      wallBg: currentBg
+    };
+
+    if (id) {
+      await updateItem('templates', id, templateData);
+      toast('Template updated!', 'success');
+    } else {
+      await addItem('templates', templateData);
+      toast('Template created successfully!', 'success');
+    }
+
+    builderModal.classList.add('hidden');
+    await loadTemplatesCatalog();
+  } catch(err) {
+    toast('Error: ' + err.message, 'error');
+  } finally {
+    btnLoad(btn, false);
+  }
+});
+
+// Edit & Delete
+window.editTemplate = async (id) => {
+  const templates = await getTemplates();
+  const t = templates.find(x => x.id === id);
+  if (t) openBuilder(t);
+};
+
+window.removeTemplate = async (id) => {
+  if (!confirm('Delete this template?')) return;
+  await deleteItem('templates', id);
+  toast('Template deleted', 'success');
+  await loadTemplatesCatalog();
+};
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => { if (confirm('Logout?')) await adminSignOut(); });
+</script>
+</body>
+</html>
